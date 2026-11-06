@@ -1,0 +1,868 @@
+===== ETAP 1: sprzet =====
+liczba rdzeni logicznych (nproc): 8
+model name	: 11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz
+               razem       użyte       wolne    dzielone   buf/cache    dostępne
+Pamięć:         15Gi       9,5Gi       2,8Gi       1,7Gi       4,7Gi       5,5Gi
+Wymiana:       2,0Gi       1,7Gi       286Mi
+
+
+===== ETAP 1: kompilacja pthreads_suma (Makefile: OPT = -O3 -fopenmp) =====
+gcc -c -O3 -fopenmp pthreads_suma.c -I./include 
+gcc -O3 -fopenmp pthreads_suma.o -o pthreads_suma -L./lib -lpomiar_czasu -lm -lpthread
+/usr/bin/ld: ./lib/libpomiar_czasu.a(pomiar_czasu.o): relocation R_X86_64_32 against `.bss' can not be used when making a PIE object; recompile with -fPIE
+/usr/bin/ld: failed to set dynamic section sizes: bad value
+collect2: error: ld returned 1 exit status
+make: *** [Makefile:22: pthreads_suma] Błąd 1
+
+
+===== ETAP 1: przebudowa biblioteki pomiar_czasu (stara nie linkuje sie - PIE) =====
+gcc -c -g -DDEBUG pomiar_czasu.c
+ar -rs libpomiar_czasu.a pomiar_czasu.o
+ar: tworzenie libpomiar_czasu.a
+
+
+===== ETAP 1: kompilacja pthreads_suma po przebudowie biblioteki (-O3 -fopenmp) =====
+gcc -c -O3 -fopenmp pthreads_suma.c -I./include 
+gcc -O3 -fopenmp pthreads_suma.o -o pthreads_suma -L./lib -lpomiar_czasu -lm -lpthread
+
+
+===== ETAP 1: uruchomienie (ROZMIAR=100000000, LICZBA_W=2, -O3) =====
+Obliczenia sekwencyjne
+suma = 50000000.500000
+Czas obliczen sekwencyjnych = 0.300481
+Poczatek tworzenia watkow
+suma = 50000000.500000
+Czas obliczen 2 wątków = 0.134074
+Poczatek tworzenia watkow
+suma = 50000000.500000
+Czas obliczen 2 wątków (globalna tablica zamiast mutex'a) = 0.139156
+
+
+===== ETAP 2: pomiary sumy | wojciech@wojciech-Latitude-5420 | śro, 28 paź 2026, 17:10:42 CET =====
+
+
+===== ETAP 2: OPT="-g -DDEBUG", ROZMIAR=1000, LICZBA_W=1 =====
+gcc -c -g -DDEBUG -DROZMIAR=1000 -DLICZBA_W=1 pthreads_suma.c -I./include 
+gcc -g -DDEBUG -DROZMIAR=1000 -DLICZBA_W=1 pthreads_suma.o -o pthreads_suma -L./lib -lpomiar_czasu -lm -lpthread
+
+--- uruchomienie 1 ---
+Obliczenia sekwencyjne
+suma = 500.500000
+Czas obliczen sekwencyjnych = 0.000007
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 1 wątków = 0.000504
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 1 wątków (globalna tablica zamiast mutex'a) = 0.000108
+
+--- uruchomienie 2 ---
+Obliczenia sekwencyjne
+suma = 500.500000
+Czas obliczen sekwencyjnych = 0.000009
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 1 wątków = 0.000553
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 1 wątków (globalna tablica zamiast mutex'a) = 0.000111
+
+--- uruchomienie 3 ---
+Obliczenia sekwencyjne
+suma = 500.500000
+Czas obliczen sekwencyjnych = 0.000007
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 1 wątków = 0.000443
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 1 wątków (globalna tablica zamiast mutex'a) = 0.000110
+
+
+===== ETAP 2: OPT="-g -DDEBUG", ROZMIAR=1000, LICZBA_W=2 =====
+gcc -c -g -DDEBUG -DROZMIAR=1000 -DLICZBA_W=2 pthreads_suma.c -I./include 
+gcc -g -DDEBUG -DROZMIAR=1000 -DLICZBA_W=2 pthreads_suma.o -o pthreads_suma -L./lib -lpomiar_czasu -lm -lpthread
+
+--- uruchomienie 1 ---
+Obliczenia sekwencyjne
+suma = 500.500000
+Czas obliczen sekwencyjnych = 0.000008
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 2 wątków = 0.000428
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 2 wątków (globalna tablica zamiast mutex'a) = 0.000084
+
+--- uruchomienie 2 ---
+Obliczenia sekwencyjne
+suma = 500.500000
+Czas obliczen sekwencyjnych = 0.000008
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 2 wątków = 0.000460
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 2 wątków (globalna tablica zamiast mutex'a) = 0.000140
+
+--- uruchomienie 3 ---
+Obliczenia sekwencyjne
+suma = 500.500000
+Czas obliczen sekwencyjnych = 0.000007
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 2 wątków = 0.000401
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 2 wątków (globalna tablica zamiast mutex'a) = 0.000114
+
+
+===== ETAP 2: OPT="-g -DDEBUG", ROZMIAR=1000, LICZBA_W=4 =====
+gcc -c -g -DDEBUG -DROZMIAR=1000 -DLICZBA_W=4 pthreads_suma.c -I./include 
+gcc -g -DDEBUG -DROZMIAR=1000 -DLICZBA_W=4 pthreads_suma.o -o pthreads_suma -L./lib -lpomiar_czasu -lm -lpthread
+
+--- uruchomienie 1 ---
+Obliczenia sekwencyjne
+suma = 500.500000
+Czas obliczen sekwencyjnych = 0.000007
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 4 wątków = 0.000505
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 4 wątków (globalna tablica zamiast mutex'a) = 0.000131
+
+--- uruchomienie 2 ---
+Obliczenia sekwencyjne
+suma = 500.500000
+Czas obliczen sekwencyjnych = 0.000007
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 4 wątków = 0.000644
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 4 wątków (globalna tablica zamiast mutex'a) = 0.000150
+
+--- uruchomienie 3 ---
+Obliczenia sekwencyjne
+suma = 500.500000
+Czas obliczen sekwencyjnych = 0.000007
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 4 wątków = 0.000435
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 4 wątków (globalna tablica zamiast mutex'a) = 0.000115
+
+
+===== ETAP 2: OPT="-g -DDEBUG", ROZMIAR=1000000, LICZBA_W=1 =====
+gcc -c -g -DDEBUG -DROZMIAR=1000000 -DLICZBA_W=1 pthreads_suma.c -I./include 
+gcc -g -DDEBUG -DROZMIAR=1000000 -DLICZBA_W=1 pthreads_suma.o -o pthreads_suma -L./lib -lpomiar_czasu -lm -lpthread
+
+--- uruchomienie 1 ---
+Obliczenia sekwencyjne
+suma = 500000.500000
+Czas obliczen sekwencyjnych = 0.007012
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 1 wątków = 0.007742
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 1 wątków (globalna tablica zamiast mutex'a) = 0.007216
+
+--- uruchomienie 2 ---
+Obliczenia sekwencyjne
+suma = 500000.500000
+Czas obliczen sekwencyjnych = 0.006860
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 1 wątków = 0.008636
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 1 wątków (globalna tablica zamiast mutex'a) = 0.007201
+
+--- uruchomienie 3 ---
+Obliczenia sekwencyjne
+suma = 500000.500000
+Czas obliczen sekwencyjnych = 0.006614
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 1 wątków = 0.008130
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 1 wątków (globalna tablica zamiast mutex'a) = 0.006913
+
+
+===== ETAP 2: OPT="-g -DDEBUG", ROZMIAR=1000000, LICZBA_W=2 =====
+gcc -c -g -DDEBUG -DROZMIAR=1000000 -DLICZBA_W=2 pthreads_suma.c -I./include 
+gcc -g -DDEBUG -DROZMIAR=1000000 -DLICZBA_W=2 pthreads_suma.o -o pthreads_suma -L./lib -lpomiar_czasu -lm -lpthread
+
+--- uruchomienie 1 ---
+Obliczenia sekwencyjne
+suma = 500000.500000
+Czas obliczen sekwencyjnych = 0.006981
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 2 wątków = 0.003744
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 2 wątków (globalna tablica zamiast mutex'a) = 0.003263
+
+--- uruchomienie 2 ---
+Obliczenia sekwencyjne
+suma = 500000.500000
+Czas obliczen sekwencyjnych = 0.007993
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 2 wątków = 0.004429
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 2 wątków (globalna tablica zamiast mutex'a) = 0.003549
+
+--- uruchomienie 3 ---
+Obliczenia sekwencyjne
+suma = 500000.500000
+Czas obliczen sekwencyjnych = 0.007782
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 2 wątków = 0.004308
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 2 wątków (globalna tablica zamiast mutex'a) = 0.003686
+
+
+===== ETAP 2: OPT="-g -DDEBUG", ROZMIAR=1000000, LICZBA_W=4 =====
+gcc -c -g -DDEBUG -DROZMIAR=1000000 -DLICZBA_W=4 pthreads_suma.c -I./include 
+gcc -g -DDEBUG -DROZMIAR=1000000 -DLICZBA_W=4 pthreads_suma.o -o pthreads_suma -L./lib -lpomiar_czasu -lm -lpthread
+
+--- uruchomienie 1 ---
+Obliczenia sekwencyjne
+suma = 500000.500000
+Czas obliczen sekwencyjnych = 0.006586
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 4 wątków = 0.002158
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 4 wątków (globalna tablica zamiast mutex'a) = 0.001860
+
+--- uruchomienie 2 ---
+Obliczenia sekwencyjne
+suma = 500000.500000
+Czas obliczen sekwencyjnych = 0.006932
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 4 wątków = 0.002403
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 4 wątków (globalna tablica zamiast mutex'a) = 0.002070
+
+--- uruchomienie 3 ---
+Obliczenia sekwencyjne
+suma = 500000.500000
+Czas obliczen sekwencyjnych = 0.007122
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 4 wątków = 0.002548
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 4 wątków (globalna tablica zamiast mutex'a) = 0.002434
+
+
+===== ETAP 2: OPT="-O3 -fopenmp", ROZMIAR=1000, LICZBA_W=1 =====
+gcc -c -O3 -fopenmp -DROZMIAR=1000 -DLICZBA_W=1 pthreads_suma.c -I./include 
+gcc -O3 -fopenmp -DROZMIAR=1000 -DLICZBA_W=1 pthreads_suma.o -o pthreads_suma -L./lib -lpomiar_czasu -lm -lpthread
+
+--- uruchomienie 1 ---
+Obliczenia sekwencyjne
+suma = 500.500000
+Czas obliczen sekwencyjnych = 0.000003
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 1 wątków = 0.000688
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 1 wątków (globalna tablica zamiast mutex'a) = 0.000085
+
+--- uruchomienie 2 ---
+Obliczenia sekwencyjne
+suma = 500.500000
+Czas obliczen sekwencyjnych = 0.000005
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 1 wątków = 0.000488
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 1 wątków (globalna tablica zamiast mutex'a) = 0.000085
+
+--- uruchomienie 3 ---
+Obliczenia sekwencyjne
+suma = 500.500000
+Czas obliczen sekwencyjnych = 0.000004
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 1 wątków = 0.000471
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 1 wątków (globalna tablica zamiast mutex'a) = 0.000062
+
+
+===== ETAP 2: OPT="-O3 -fopenmp", ROZMIAR=1000, LICZBA_W=2 =====
+gcc -c -O3 -fopenmp -DROZMIAR=1000 -DLICZBA_W=2 pthreads_suma.c -I./include 
+gcc -O3 -fopenmp -DROZMIAR=1000 -DLICZBA_W=2 pthreads_suma.o -o pthreads_suma -L./lib -lpomiar_czasu -lm -lpthread
+
+--- uruchomienie 1 ---
+Obliczenia sekwencyjne
+suma = 500.500000
+Czas obliczen sekwencyjnych = 0.000004
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 2 wątków = 0.000524
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 2 wątków (globalna tablica zamiast mutex'a) = 0.000094
+
+--- uruchomienie 2 ---
+Obliczenia sekwencyjne
+suma = 500.500000
+Czas obliczen sekwencyjnych = 0.000003
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 2 wątków = 0.000411
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 2 wątków (globalna tablica zamiast mutex'a) = 0.000081
+
+--- uruchomienie 3 ---
+Obliczenia sekwencyjne
+suma = 500.500000
+Czas obliczen sekwencyjnych = 0.000004
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 2 wątków = 0.000486
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 2 wątków (globalna tablica zamiast mutex'a) = 0.000125
+
+
+===== ETAP 2: OPT="-O3 -fopenmp", ROZMIAR=1000, LICZBA_W=4 =====
+gcc -c -O3 -fopenmp -DROZMIAR=1000 -DLICZBA_W=4 pthreads_suma.c -I./include 
+gcc -O3 -fopenmp -DROZMIAR=1000 -DLICZBA_W=4 pthreads_suma.o -o pthreads_suma -L./lib -lpomiar_czasu -lm -lpthread
+
+--- uruchomienie 1 ---
+Obliczenia sekwencyjne
+suma = 500.500000
+Czas obliczen sekwencyjnych = 0.000003
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 4 wątków = 0.000546
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 4 wątków (globalna tablica zamiast mutex'a) = 0.000151
+
+--- uruchomienie 2 ---
+Obliczenia sekwencyjne
+suma = 500.500000
+Czas obliczen sekwencyjnych = 0.000003
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 4 wątków = 0.000610
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 4 wątków (globalna tablica zamiast mutex'a) = 0.000120
+
+--- uruchomienie 3 ---
+Obliczenia sekwencyjne
+suma = 500.500000
+Czas obliczen sekwencyjnych = 0.000004
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 4 wątków = 0.000563
+Poczatek tworzenia watkow
+suma = 500.500000
+Czas obliczen 4 wątków (globalna tablica zamiast mutex'a) = 0.000115
+
+
+===== ETAP 2: OPT="-O3 -fopenmp", ROZMIAR=1000000, LICZBA_W=1 =====
+gcc -c -O3 -fopenmp -DROZMIAR=1000000 -DLICZBA_W=1 pthreads_suma.c -I./include 
+gcc -O3 -fopenmp -DROZMIAR=1000000 -DLICZBA_W=1 pthreads_suma.o -o pthreads_suma -L./lib -lpomiar_czasu -lm -lpthread
+
+--- uruchomienie 1 ---
+Obliczenia sekwencyjne
+suma = 500000.500000
+Czas obliczen sekwencyjnych = 0.004217
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 1 wątków = 0.003464
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 1 wątków (globalna tablica zamiast mutex'a) = 0.002983
+
+--- uruchomienie 2 ---
+Obliczenia sekwencyjne
+suma = 500000.500000
+Czas obliczen sekwencyjnych = 0.003028
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 1 wątków = 0.003404
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 1 wątków (globalna tablica zamiast mutex'a) = 0.003056
+
+--- uruchomienie 3 ---
+Obliczenia sekwencyjne
+suma = 500000.500000
+Czas obliczen sekwencyjnych = 0.003069
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 1 wątków = 0.004897
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 1 wątków (globalna tablica zamiast mutex'a) = 0.003443
+
+
+===== ETAP 2: OPT="-O3 -fopenmp", ROZMIAR=1000000, LICZBA_W=2 =====
+gcc -c -O3 -fopenmp -DROZMIAR=1000000 -DLICZBA_W=2 pthreads_suma.c -I./include 
+gcc -O3 -fopenmp -DROZMIAR=1000000 -DLICZBA_W=2 pthreads_suma.o -o pthreads_suma -L./lib -lpomiar_czasu -lm -lpthread
+
+--- uruchomienie 1 ---
+Obliczenia sekwencyjne
+suma = 500000.500000
+Czas obliczen sekwencyjnych = 0.003114
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 2 wątków = 0.002096
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 2 wątków (globalna tablica zamiast mutex'a) = 0.001780
+
+--- uruchomienie 2 ---
+Obliczenia sekwencyjne
+suma = 500000.500000
+Czas obliczen sekwencyjnych = 0.003059
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 2 wątków = 0.002218
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 2 wątków (globalna tablica zamiast mutex'a) = 0.001629
+
+--- uruchomienie 3 ---
+Obliczenia sekwencyjne
+suma = 500000.500000
+Czas obliczen sekwencyjnych = 0.003169
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 2 wątków = 0.003451
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 2 wątków (globalna tablica zamiast mutex'a) = 0.002103
+
+
+===== ETAP 2: OPT="-O3 -fopenmp", ROZMIAR=1000000, LICZBA_W=4 =====
+gcc -c -O3 -fopenmp -DROZMIAR=1000000 -DLICZBA_W=4 pthreads_suma.c -I./include 
+gcc -O3 -fopenmp -DROZMIAR=1000000 -DLICZBA_W=4 pthreads_suma.o -o pthreads_suma -L./lib -lpomiar_czasu -lm -lpthread
+
+--- uruchomienie 1 ---
+Obliczenia sekwencyjne
+suma = 500000.500000
+Czas obliczen sekwencyjnych = 0.002993
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 4 wątków = 0.001378
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 4 wątków (globalna tablica zamiast mutex'a) = 0.000945
+
+--- uruchomienie 2 ---
+Obliczenia sekwencyjne
+suma = 500000.500000
+Czas obliczen sekwencyjnych = 0.003101
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 4 wątków = 0.001388
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 4 wątków (globalna tablica zamiast mutex'a) = 0.000930
+
+--- uruchomienie 3 ---
+Obliczenia sekwencyjne
+suma = 500000.500000
+Czas obliczen sekwencyjnych = 0.003177
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 4 wątków = 0.001284
+Poczatek tworzenia watkow
+suma = 500000.500000
+Czas obliczen 4 wątków (globalna tablica zamiast mutex'a) = 0.000957
+
+
+===== ETAP 3: kompilacja obliczanie_calki =====
+rm -f *.o obliczanie_calki
+gcc -c -O3 -Wno-unused-result obliczanie_calki.c -I./include -I. 
+gcc -c -O3 -Wno-unused-result dekompozycja_petli.c -I./include -I. 
+gcc -c -O3 -Wno-unused-result dekompozycja_obszaru.c -I./include -I. 
+gcc -O3 -Wno-unused-result obliczanie_calki.o dekompozycja_petli.o dekompozycja_obszaru.o -o obliczanie_calki -L./lib -L. -L../pomiar_czasu -lpomiar_czasu -lm -lpthread
+
+
+===== ETAP 3: dx = 0.1 =====
+
+Program obliczania całki z funkcji (sinus) metodą trapezów.
+
+Podaj wysokość pojedynczego trapezu:  
+Poczatek obliczeń sekwencyjnych
+Obliczona liczba trapezów: N = 32, dx_adjust = 0.098175
+
+Koniec obliczen sekwencyjnych
+	Czas wykonania 0.000021. 	Obliczona całka = 1.998393360970144
+
+Poczatek obliczeń równoległych (zrównoleglenie pętli)
+Obliczona liczba trapezów: N = 32, dx_adjust = 0.098175
+
+Koniec obliczen  równoległych (zrównoleglenie pętli) 
+	Czas wykonania 0.000001. 	Obliczona całka = 0.000000000000000
+
+Poczatek obliczeń równoległych (dekompozycja obszaru)
+
+Koniec obliczen  równoległych (dekompozycja obszaru) 
+	Czas wykonania 0.000001. 	Obliczona całka = 0.000000000000000
+
+
+===== ETAP 3: dx = 0.01 =====
+
+Program obliczania całki z funkcji (sinus) metodą trapezów.
+
+Podaj wysokość pojedynczego trapezu:  
+Poczatek obliczeń sekwencyjnych
+Obliczona liczba trapezów: N = 315, dx_adjust = 0.009973
+
+Koniec obliczen sekwencyjnych
+	Czas wykonania 0.000062. 	Obliczona całka = 1.999983422153753
+
+Poczatek obliczeń równoległych (zrównoleglenie pętli)
+Obliczona liczba trapezów: N = 315, dx_adjust = 0.009973
+
+Koniec obliczen  równoległych (zrównoleglenie pętli) 
+	Czas wykonania 0.000002. 	Obliczona całka = 0.000000000000000
+
+Poczatek obliczeń równoległych (dekompozycja obszaru)
+
+Koniec obliczen  równoległych (dekompozycja obszaru) 
+	Czas wykonania 0.000000. 	Obliczona całka = 0.000000000000000
+
+
+===== ETAP 3: dx = 0.0001 =====
+
+Program obliczania całki z funkcji (sinus) metodą trapezów.
+
+Podaj wysokość pojedynczego trapezu:  
+Poczatek obliczeń sekwencyjnych
+Obliczona liczba trapezów: N = 31416, dx_adjust = 0.000100
+
+Koniec obliczen sekwencyjnych
+	Czas wykonania 0.001503. 	Obliczona całka = 1.999999998333344
+
+Poczatek obliczeń równoległych (zrównoleglenie pętli)
+Obliczona liczba trapezów: N = 31416, dx_adjust = 0.000100
+
+Koniec obliczen  równoległych (zrównoleglenie pętli) 
+	Czas wykonania 0.000002. 	Obliczona całka = 0.000000000000000
+
+Poczatek obliczeń równoległych (dekompozycja obszaru)
+
+Koniec obliczen  równoległych (dekompozycja obszaru) 
+	Czas wykonania 0.000001. 	Obliczona całka = 0.000000000000000
+
+
+===== ETAP 3: dx = 0.00001 =====
+
+Program obliczania całki z funkcji (sinus) metodą trapezów.
+
+Podaj wysokość pojedynczego trapezu:  
+Poczatek obliczeń sekwencyjnych
+Obliczona liczba trapezów: N = 314160, dx_adjust = 0.000010
+
+Koniec obliczen sekwencyjnych
+	Czas wykonania 0.014071. 	Obliczona całka = 1.999999999983388
+
+Poczatek obliczeń równoległych (zrównoleglenie pętli)
+Obliczona liczba trapezów: N = 314160, dx_adjust = 0.000010
+
+Koniec obliczen  równoległych (zrównoleglenie pętli) 
+	Czas wykonania 0.000003. 	Obliczona całka = 0.000000000000000
+
+Poczatek obliczeń równoległych (dekompozycja obszaru)
+
+Koniec obliczen  równoległych (dekompozycja obszaru) 
+	Czas wykonania 0.000000. 	Obliczona całka = 0.000000000000000
+
+
+===== ETAP 3: dx = 0.0000001 =====
+
+Program obliczania całki z funkcji (sinus) metodą trapezów.
+
+Podaj wysokość pojedynczego trapezu:  
+Poczatek obliczeń sekwencyjnych
+Obliczona liczba trapezów: N = 31415927, dx_adjust = 0.000000
+
+Koniec obliczen sekwencyjnych
+	Czas wykonania 1.102423. 	Obliczona całka = 1.999999999999808
+
+Poczatek obliczeń równoległych (zrównoleglenie pętli)
+Obliczona liczba trapezów: N = 31415927, dx_adjust = 0.000000
+
+Koniec obliczen  równoległych (zrównoleglenie pętli) 
+	Czas wykonania 0.000004. 	Obliczona całka = 0.000000000000000
+
+Poczatek obliczeń równoległych (dekompozycja obszaru)
+
+Koniec obliczen  równoległych (dekompozycja obszaru) 
+	Czas wykonania 0.000000. 	Obliczona całka = 0.000000000000000
+
+
+===== ETAP 4: kompilacja (dekompozycja cykliczna) =====
+rm -f *.o obliczanie_calki
+gcc -c -O3 -Wno-unused-result obliczanie_calki.c -I./include -I. 
+gcc -c -O3 -Wno-unused-result dekompozycja_petli.c -I./include -I. 
+gcc -c -O3 -Wno-unused-result dekompozycja_obszaru.c -I./include -I. 
+gcc -O3 -Wno-unused-result obliczanie_calki.o dekompozycja_petli.o dekompozycja_obszaru.o -o obliczanie_calki -L./lib -L. -L../pomiar_czasu -lpomiar_czasu -lm -lpthread
+
+
+===== ETAP 4 (cykliczny): dx = 0.1, l_w = 3 =====
+
+Program obliczania całki z funkcji (sinus) metodą trapezów.
+
+Podaj wysokość pojedynczego trapezu:  
+Podaj liczbę wątków:  
+Poczatek obliczeń sekwencyjnych
+Obliczona liczba trapezów: N = 32, dx_adjust = 0.098175
+
+Koniec obliczen sekwencyjnych
+	Czas wykonania 0.000021. 	Obliczona całka = 1.998393360970144
+
+Poczatek obliczeń równoległych (zrównoleglenie pętli)
+Obliczona liczba trapezów: N = 32, dx_adjust = 0.098175
+
+Wątek 0: my_start 0, my_end 32, my_stride 3
+
+Wątek 1: my_start 1, my_end 32, my_stride 3
+
+Wątek 2: my_start 2, my_end 32, my_stride 3
+
+Koniec obliczen  równoległych (zrównoleglenie pętli) 
+	Czas wykonania 0.000459. 	Obliczona całka = 1.998393360970145
+
+Poczatek obliczeń równoległych (dekompozycja obszaru)
+
+Koniec obliczen  równoległych (dekompozycja obszaru) 
+	Czas wykonania 0.000000. 	Obliczona całka = 0.000000000000000
+
+
+===== ETAP 4 (cykliczny): dx = 0.0000001, l_w = 1 =====
+
+Program obliczania całki z funkcji (sinus) metodą trapezów.
+
+Podaj wysokość pojedynczego trapezu:  
+Podaj liczbę wątków:  
+Poczatek obliczeń sekwencyjnych
+Obliczona liczba trapezów: N = 31415927, dx_adjust = 0.000000
+
+Koniec obliczen sekwencyjnych
+	Czas wykonania 1.128545. 	Obliczona całka = 1.999999999999808
+
+Poczatek obliczeń równoległych (zrównoleglenie pętli)
+Obliczona liczba trapezów: N = 31415927, dx_adjust = 0.000000
+
+Wątek 0: my_start 0, my_end 31415927, my_stride 1
+
+Koniec obliczen  równoległych (zrównoleglenie pętli) 
+	Czas wykonania 1.114825. 	Obliczona całka = 1.999999999999808
+
+Poczatek obliczeń równoległych (dekompozycja obszaru)
+
+Koniec obliczen  równoległych (dekompozycja obszaru) 
+	Czas wykonania 0.000001. 	Obliczona całka = 0.000000000000000
+
+
+===== ETAP 4 (cykliczny): dx = 0.0000001, l_w = 2 =====
+
+Program obliczania całki z funkcji (sinus) metodą trapezów.
+
+Podaj wysokość pojedynczego trapezu:  
+Podaj liczbę wątków:  
+Poczatek obliczeń sekwencyjnych
+Obliczona liczba trapezów: N = 31415927, dx_adjust = 0.000000
+
+Koniec obliczen sekwencyjnych
+	Czas wykonania 1.160237. 	Obliczona całka = 1.999999999999808
+
+Poczatek obliczeń równoległych (zrównoleglenie pętli)
+Obliczona liczba trapezów: N = 31415927, dx_adjust = 0.000000
+
+Wątek 0: my_start 0, my_end 31415927, my_stride 2
+
+Wątek 1: my_start 1, my_end 31415927, my_stride 2
+
+Koniec obliczen  równoległych (zrównoleglenie pętli) 
+	Czas wykonania 0.558688. 	Obliczona całka = 2.000000000000022
+
+Poczatek obliczeń równoległych (dekompozycja obszaru)
+
+Koniec obliczen  równoległych (dekompozycja obszaru) 
+	Czas wykonania 0.000000. 	Obliczona całka = 0.000000000000000
+
+
+===== ETAP 4 (cykliczny): dx = 0.0000001, l_w = 4 =====
+
+Program obliczania całki z funkcji (sinus) metodą trapezów.
+
+Podaj wysokość pojedynczego trapezu:  
+Podaj liczbę wątków:  
+Poczatek obliczeń sekwencyjnych
+Obliczona liczba trapezów: N = 31415927, dx_adjust = 0.000000
+
+Koniec obliczen sekwencyjnych
+	Czas wykonania 1.214921. 	Obliczona całka = 1.999999999999808
+
+Poczatek obliczeń równoległych (zrównoleglenie pętli)
+Obliczona liczba trapezów: N = 31415927, dx_adjust = 0.000000
+
+Wątek 0: my_start 0, my_end 31415927, my_stride 4
+
+Wątek 2: my_start 2, my_end 31415927, my_stride 4
+
+Wątek 3: my_start 3, my_end 31415927, my_stride 4
+
+Wątek 1: my_start 1, my_end 31415927, my_stride 4
+
+Koniec obliczen  równoległych (zrównoleglenie pętli) 
+	Czas wykonania 0.344993. 	Obliczona całka = 2.000000000000049
+
+Poczatek obliczeń równoległych (dekompozycja obszaru)
+
+Koniec obliczen  równoległych (dekompozycja obszaru) 
+	Czas wykonania 0.000001. 	Obliczona całka = 0.000000000000000
+
+
+===== ETAP 5: kompilacja (dekompozycja blokowa) =====
+rm -f *.o obliczanie_calki
+gcc -c -O3 -Wno-unused-result obliczanie_calki.c -I./include -I. 
+gcc -c -O3 -Wno-unused-result dekompozycja_petli.c -I./include -I. 
+gcc -c -O3 -Wno-unused-result dekompozycja_obszaru.c -I./include -I. 
+gcc -O3 -Wno-unused-result obliczanie_calki.o dekompozycja_petli.o dekompozycja_obszaru.o -o obliczanie_calki -L./lib -L. -L../pomiar_czasu -lpomiar_czasu -lm -lpthread
+
+
+===== ETAP 5 (blokowy): dx = 0.1, l_w = 3 =====
+
+Program obliczania całki z funkcji (sinus) metodą trapezów.
+
+Podaj wysokość pojedynczego trapezu:  
+Podaj liczbę wątków:  
+Poczatek obliczeń sekwencyjnych
+Obliczona liczba trapezów: N = 32, dx_adjust = 0.098175
+
+Koniec obliczen sekwencyjnych
+	Czas wykonania 0.000038. 	Obliczona całka = 1.998393360970144
+
+Poczatek obliczeń równoległych (zrównoleglenie pętli)
+Obliczona liczba trapezów: N = 32, dx_adjust = 0.098175
+
+Wątek 0: my_start 0, my_end 11, my_stride 1
+
+Wątek 1: my_start 11, my_end 22, my_stride 1
+
+Wątek 2: my_start 22, my_end 32, my_stride 1
+
+Koniec obliczen  równoległych (zrównoleglenie pętli) 
+	Czas wykonania 0.000598. 	Obliczona całka = 1.998393360970145
+
+Poczatek obliczeń równoległych (dekompozycja obszaru)
+
+Koniec obliczen  równoległych (dekompozycja obszaru) 
+	Czas wykonania 0.000000. 	Obliczona całka = 0.000000000000000
+
+
+===== ETAP 5 (blokowy): dx = 0.0000001, l_w = 1 =====
+
+Program obliczania całki z funkcji (sinus) metodą trapezów.
+
+Podaj wysokość pojedynczego trapezu:  
+Podaj liczbę wątków:  
+Poczatek obliczeń sekwencyjnych
+Obliczona liczba trapezów: N = 31415927, dx_adjust = 0.000000
+
+Koniec obliczen sekwencyjnych
+	Czas wykonania 1.125918. 	Obliczona całka = 1.999999999999808
+
+Poczatek obliczeń równoległych (zrównoleglenie pętli)
+Obliczona liczba trapezów: N = 31415927, dx_adjust = 0.000000
+
+Wątek 0: my_start 0, my_end 31415927, my_stride 1
+
+Koniec obliczen  równoległych (zrównoleglenie pętli) 
+	Czas wykonania 1.134618. 	Obliczona całka = 1.999999999999808
+
+Poczatek obliczeń równoległych (dekompozycja obszaru)
+
+Koniec obliczen  równoległych (dekompozycja obszaru) 
+	Czas wykonania 0.000001. 	Obliczona całka = 0.000000000000000
+
+
+===== ETAP 5 (blokowy): dx = 0.0000001, l_w = 2 =====
+
+Program obliczania całki z funkcji (sinus) metodą trapezów.
+
+Podaj wysokość pojedynczego trapezu:  
+Podaj liczbę wątków:  
+Poczatek obliczeń sekwencyjnych
+Obliczona liczba trapezów: N = 31415927, dx_adjust = 0.000000
+
+Koniec obliczen sekwencyjnych
+	Czas wykonania 1.096494. 	Obliczona całka = 1.999999999999808
+
+Poczatek obliczeń równoległych (zrównoleglenie pętli)
+Obliczona liczba trapezów: N = 31415927, dx_adjust = 0.000000
+
+Wątek 0: my_start 0, my_end 15707964, my_stride 1
+
+Wątek 1: my_start 15707964, my_end 31415927, my_stride 1
+
+Koniec obliczen  równoległych (zrównoleglenie pętli) 
+	Czas wykonania 0.583638. 	Obliczona całka = 2.000000000000043
+
+Poczatek obliczeń równoległych (dekompozycja obszaru)
+
+Koniec obliczen  równoległych (dekompozycja obszaru) 
+	Czas wykonania 0.000000. 	Obliczona całka = 0.000000000000000
+
+
+===== ETAP 5 (blokowy): dx = 0.0000001, l_w = 4 =====
+
+Program obliczania całki z funkcji (sinus) metodą trapezów.
+
+Podaj wysokość pojedynczego trapezu:  
+Podaj liczbę wątków:  
+Poczatek obliczeń sekwencyjnych
+Obliczona liczba trapezów: N = 31415927, dx_adjust = 0.000000
+
+Koniec obliczen sekwencyjnych
+	Czas wykonania 1.124503. 	Obliczona całka = 1.999999999999808
+
+Poczatek obliczeń równoległych (zrównoleglenie pętli)
+Obliczona liczba trapezów: N = 31415927, dx_adjust = 0.000000
+
+Wątek 0: my_start 0, my_end 7853982, my_stride 1
+
+Wątek 3: my_start 23561946, my_end 31415927, my_stride 1
+
+Wątek 1: my_start 7853982, my_end 15707964, my_stride 1
+
+Wątek 2: my_start 15707964, my_end 23561946, my_stride 1
+
+Koniec obliczen  równoległych (zrównoleglenie pętli) 
+	Czas wykonania 0.369212. 	Obliczona całka = 2.000000000000162
+
+Poczatek obliczeń równoległych (dekompozycja obszaru)
+
+Koniec obliczen  równoległych (dekompozycja obszaru) 
+	Czas wykonania 0.000000. 	Obliczona całka = 0.000000000000000
